@@ -1,76 +1,70 @@
-function renderTotalBooks() {
-  const count = getTotalBooksCount(books);
-  if (typeof count !== "number") return;
-
-  const span = document.querySelector("#total-book-count");
-  span.innerHTML = count;
+function getTotalBooksCount(books) {
+  return books.length
 }
 
-function renderBooksBorrowed() {
-  const count = getBooksBorrowedCount(books);
-  if (typeof count !== "number") return;
-
-  const span = document.querySelector("#total-borrow-count");
-  span.innerHTML = count;
+function getTotalAccountsCount(accounts) {
+  return accounts.length
 }
 
-function renderTotalAccounts() {
-  const count = getTotalAccountsCount(accounts);
-  if (typeof count !== "number") return;
-
-  const span = document.querySelector("#total-accounts-count");
-  span.innerHTML = count;
+function getBooksBorrowedCount(books) {
+ let booksCheckedOut = books.filter(
+  (book) =>
+   book.borrows.filter((record) => record.returned === false).length > 0
+ );
+ return booksCheckedOut.length;
 }
 
-function rendergetMostCommonGenres() {
-  const result = getMostCommonGenres(books);
-  if (typeof result !== "object") return;
-
-  const lis = result
-    .map((genre) => {
-      return `<li class="list-group-item">${genre.name} <span class="text-primary">(${genre.count})</span></li>`;
-    })
-    .join("");
-
-  const ul = document.querySelector("#most-common-genres");
-  ul.innerHTML = lis;
+function getMostCommonGenres(books) {
+ let map = {};
+ books.forEach((num) => {
+  if (map[num.genre]) {
+   map[num.genre]++;
+  } else {
+   map[num.genre] = 1;
+  }
+ });
+ return Object.entries(map)
+  .map(([name, count]) => {
+   return {
+    name,
+    count
+   };
+  })
+  .sort((a, b) => b.count - a.count)
+  .slice(0, 5);
 }
 
-function rendergetMostPopularBooks() {
-  const result = getMostPopularBooks(books);
-  if (typeof result !== "object") return;
-
-  const lis = result
-    .map((book) => {
-      return `<li class="list-group-item">${book.name} <span class="text-primary">(${book.count} borrows)</span></li>`;
-    })
-    .join("");
-
-  const ul = document.querySelector("#most-popular-books");
-  ul.innerHTML = lis;
+function getMostPopularBooks(books) {
+ return books
+  .map((book) => {
+   return { name: book.title, count: book.borrows.length };
+  })
+  .sort((a, b) => (a.count < b.count ? 1 : -1))
+  .slice(0, 5);
 }
 
-function rendergetMostPopularAuthors() {
-  const result = getMostPopularAuthors(books, authors);
-  if (typeof result !== "object") return;
-
-  const lis = result
-    .map((author) => {
-      return `<li class="list-group-item">${author.name} <span class="text-primary">(${author.count} borrows)</span></li>`;
-    })
-    .join("");
-
-  const ul = document.querySelector("#most-popular-authors");
-  ul.innerHTML = lis;
+function getMostPopularAuthors(books, authors) {
+ let result = [];
+ authors.forEach((author) => {
+  let theAuthor = {
+   name: `${author.name.first} ${author.name.last}`,
+   count: 0
+  };
+  books.forEach((book) => {
+   if (book.authorId === author.id) {
+    theAuthor.count += book.borrows.length;
+   }
+  });
+  result.push(theAuthor);
+ });
+ return result.sort((a, b) => b.count - a.count).slice(0, 5);
 }
 
-function render() {
-  renderTotalBooks();
-  renderBooksBorrowed();
-  renderTotalAccounts();
-  rendergetMostCommonGenres();
-  rendergetMostPopularBooks();
-  rendergetMostPopularAuthors();
-}
-
-document.addEventListener("DOMContentLoaded", render);
+module.exports = {
+  getTotalBooksCount,
+  getTotalAccountsCount,
+  getBooksBorrowedCount,
+  getMostCommonGenres,
+  getMostPopularBooks,
+  getMostPopularAuthors,
+};
