@@ -3,6 +3,8 @@ Your neighborhood has decided to put together a local library where people can l
 
 Other people are taking care of the logistics and design, but they need you to build the algorithms.
 
+![homepage]
+(https://images.ctfassets.net/c7lxnbtvvcxm/48YhCAEZ2kRJVTlaijdppz/631ddc2b4695a984202d269740a2ec9f/LocalLibrary.png)
 
 For detailed instructions on how to complete this project, consult the Instructions document in the Qualified assessment interface.
 
